@@ -2,52 +2,7 @@
   "sections": {
     "template": {
       "type": "product2",
-      "blocks": {
-        "vender": {
-          "type": "vender",
-          "settings": {
-          }
-        },
-        "title": {
-          "type": "title",
-          "settings": {
-          }
-        },
-        "price": {
-          "type": "price",
-          "settings": {
-          }
-        },
-        "variants": {
-          "type": "variants",
-          "settings": {
-          }
-        },
-        "quantity": {
-          "type": "quantity",
-          "settings": {
-          }
-        },
-        "cartbtn": {
-          "type": "cartbtn",
-          "settings": {
-          }
-        },
-        "description": {
-          "type": "description",
-          "settings": {
-          }
-        }
-      },
-      "block_order": [
-        "vender",
-        "title",
-        "price",
-        "variants",
-        "quantity",
-        "cartbtn",
-        "description"
-      ],
+      
       "settings": {
       }
     }
