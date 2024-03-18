@@ -1,0 +1,22 @@
+
+{%- if paginate.pages > 0 -%}
+    <nav>
+        
+     {% if paginate.previous %}
+      <a href="{{ paginate.previous.url }}">{{ paginate.previous.title }}</a>
+     {% endif %}
+
+    {% for part in paginate.parts -%}
+        {% if part.is_link -%}
+          <a href="{{ part.url }}">{{ part.title }}</a>
+        {%- else -%}
+          <span>{{ part.title }}</span>
+        {% endif %}
+      {%- endfor %}
+
+      {% if paginate.next %}
+        <a href="{{ paginate.next.url }}">{{ paginate.next.title }}</a>
+       {% endif %}
+
+      </nav>
+{%- endif -%}

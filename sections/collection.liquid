@@ -1,0 +1,83 @@
+{% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+
+<select id="sort-by">
+   {% for option in collection.sort_options %}
+     <option value="{{ option.value }}" {% if option.value == sort_by %}selected="selected"{% endif %}>
+       {{ option.name }}
+     </option>
+   {% endfor %}
+ </select>
+ 
+<script>
+$("#sort-by").change( async function(){
+  const sort = $(this).val()
+  const uri = "/collections/{{collection.handle}}?sort_by="+sort
+  const res = await fetch(uri) 
+  const result=await res.text()
+  const products = $(result).find("#collectionContainer").html()
+  //update dom by id
+  $("#collectionContainer").html(products) 
+  // update  the  URL
+var currenturl = new URL(window.location.href);
+currenturl.searchParams.set('sort_by', sort);
+history.replaceState(null, null, currenturl.toString());
+})
+</script>
+<div id="collectionContainer">
+<div class="flex">
+   <div>
+      <p><a href="{{ collection.url }}?sort_by={{ collection.sort_by }}">Clear all</a></p>
+  
+      {%- for filter in collection.filters -%}
+        {%- if filter.type == "price_range" -%}
+          {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+            <p>
+              <a href="{{ filter.url_to_remove }}">
+                {%- assign min_value = filter.min_value.value | default: 0 -%}
+                {%- assign max_value = filter.max_value.value | default: filter.range_max -%}
+                {{ min_value | money }} - {{ max_value | money }} X
+              </a>
+            </p>
+          {%- endif -%}
+        {%- else -%}
+          {%- for filter_value in filter.active_values -%}
+            <p>
+              <a href="{{ filter_value.url_to_remove }}">
+                {{ filter.label }}: {{ filter_value.label }} X
+              </a>
+            </p>
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+</div>
+
+<div class="flex" >
+<div class="w-3/12 px-3">
+<h2>Filter</h2>
+{% render 'filter',collection:collection %}
+</div>
+<div  class="bg-white w-9/12">
+<div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+<h2 class="text-2xl font-bold tracking-tight text-gray-900">{{ collection.title }}</h2>
+
+{% paginate collection.products by 8 %}
+ {% if collection.all_products_count > 0 %}
+    
+    <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+    {% for product in collection.products %}
+       {% render 'product',product:product %}
+    {% endfor %}
+    </div>
+
+      {% else %}
+  products not available
+ {% endif %}
+ {% render 'pagination', paginate:paginate %}
+{% endpaginate %}
+
+
+</div>
+</div>
+</div>
+</div>

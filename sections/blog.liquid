@@ -1,0 +1,20 @@
+<section class="text-gray-600 body-font">
+    <div class="container px-5 py-24 mx-auto">
+{%- paginate blog.articles by 2 -%}
+{% if blog.articles_count > 0 %}
+  <div class="grid grid-cols-12 gap-4">
+  {%- for article in blog.articles -%}
+          <div class="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3">
+           {%- include 'article' -%}
+           </div>
+  {%- endfor -%}
+  </div>
+  {% else %}
+  <div class="flex justify-center items-center h-screen">
+  {% include 'Success' with message:"No post available now" %}
+  </div>
+{% endif %}
+{% render "pagination",paginate:paginate  %}
+{%- endpaginate -%}
+</div>
+</section>

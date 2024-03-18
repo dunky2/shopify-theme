@@ -1,0 +1,204 @@
+<div class="group relative snipt-form-wrap">
+    <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+      <img src="{{ product.featured_image  | img_url:"master"}}" alt="{{ product.title }}" class="h-full w-full object-cover object-center lg:h-full lg:w-full sniptImage">
+    </div>
+    <div class="mt-4 flex justify-between">
+      <div>
+        <h3 class="text-sm text-gray-700">
+          <a href="#">
+            
+            {{ product.title }}
+          </a>
+        </h3>
+        <p class="mt-1 text-sm text-gray-500">Black</p>
+        
+        {% form "product",product, class: "sneppts-product-form" %}
+            <div id="{{ product.handle }}">
+                <input id="varint-{{ product.handle }}" type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id}}" />
+        {% comment %} {{product.options_with_values | json}} {% endcomment %}
+        {% if product.variants.size > 1 %}
+            
+        {% for option in product.options_with_values %}
+            
+            {% assign checkoption = option.values | handle %}
+          
+            
+            <p class="font-bold text-sm mb-1 text-white">{{ option.name }}</p>
+           <ul class="flex mb-3">
+            
+            {% for value in option.values %}
+            <li class="relative swatchlist">
+                {% assign imagesss = '' %}
+                {% for variant in product.variants %}
+                  {% if variant.option1 == value or variant.option2 == value or variant.option3 == value %}
+                    {% assign imagesss = variant.featured_image.src %}
+                  {% endif %}
+                {% endfor %}
+               
+                {% comment %} {% if imagesss and option.name=="Color" %}
+                <img src="{{ imagesss | img_url:"50"}}" />
+                {% endif %} {% endcomment %}
+               
+              <input {% if imagesss and option.name=="Color" %} data="{{ imagesss | img_url:"master"}}" {% endif %} class="absolute hidden" {% if option.selected_value == value %} checked {% endif %} id="{{ option.name | handleize }}-{{ value | handleize }}" type="radio" name="{{ option.name }}" value="{{ value }}" />
+              <label 
+                class="{% if option.selected_value == value %} active {% endif %} {% if imagesss and option.name=="Color" %} imglabel {% else %} withoutimglabel{% endif %} "
+                {% if imagesss and option.name=="Color" %} style="background:url({{ imagesss | img_url:"master"}})" {% endif %}
+                for="{{ option.name | handleize }}-{{ value | handleize }}">{{ value }}</label>
+            </li>
+            {% endfor %}
+        </ul>
+          
+        {% endfor %}
+    {% endif %}
+    </div>
+    <button class="spinner flex text-center items-center justify-center w-full rounded-md bg-black text-white px-2 py-1" data="{{ product.selected_or_first_available_variant.id}}" id="CartBtn-{{ product.handle }}">
+        Add to cart 
+        <span><svg class="fill-white ml-2" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_b2T7{animation:spinner_xe7Q .8s linear infinite}.spinner_YRVV{animation-delay:-.65s}.spinner_c9oY{animation-delay:-.5s}@keyframes spinner_xe7Q{93.75%,100%{r:3px}46.875%{r:.2px}}</style><circle class="spinner_b2T7" cx="4" cy="12" r="3"/><circle class="spinner_b2T7 spinner_YRVV" cx="12" cy="12" r="3"/><circle class="spinner_b2T7 spinner_c9oY" cx="20" cy="12" r="3"/></svg></span>
+    </button>
+{% endform %}
+
+
+    <script>
+     { 
+      const product = {{ product | json }}
+      const id = "{{ product.handle }}"
+      $("#"+id+" input[type='radio']").change(function(){
+        const dataimg = $(this).attr("data")
+        if(dataimg){
+        const imgsrc = $(this).closest(".snipt-form-wrap").find(".sniptImage").attr("src",dataimg)
+        
+        }
+        var selectedValues = [];
+        $('#'+id+' input[type="radio"]:checked').each(function() {
+          // Add the value to the selectedValues array
+          selectedValues.push($(this).val());
+        });
+       
+        const matchedVariant = product.variants.find((variant) => {
+            return variant.options.every((value, index) => {
+              return value === selectedValues[index]; // Assuming selectedValues and variant.options have the same length
+            });
+          });
+          const comparePrice = formatMoney(matchedVariant.compare_at_price, '{{ shop.money_format }}')
+          const price = formatMoney(matchedVariant.price, '{{ shop.money_format }}')
+          if(matchedVariant.price){
+            $(this).closest(".snipt-form-wrap").find(".snipt_price").html(price)
+            
+            } else{
+              $(this).closest(".snipt-form-wrap").find(".snipt_price").html("")
+            }
+            if(matchedVariant.compare_at_price){
+              $(this).closest(".snipt-form-wrap").find(".snipt_compare_price").html(comparePrice)
+              
+              } else{
+                $(this).closest(".snipt-form-wrap").find(".snipt_compare_price").html("")
+              }
+          $("#CartBtn-{{ product.handle }}").attr("data",matchedVariant.id)
+      });
+     }
+
+     
+     $("#CartBtn-{{ product.handle }}").click((e) => {
+        e.preventDefault();
+        const clickedElement = $(e.target);
+        const varId = clickedElement.attr("data");
+        clickedElement.removeClass("spinner");
+        
+        let formData = {
+            'items': [{
+                'id': varId,
+                'quantity': 1
+            }]
+        };
+        
+        fetch(window.Shopify.routes.root + 'cart/add.js', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json()) // Parse the response as JSON
+        .then(data => {
+            clickedElement.addClass("spinner");
+          console.log("done")
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            setTimeout(() => {
+                clickedElement.removeClass("spinner");
+            }, 300);
+        });
+    });
+    
+    
+    </script>
+      
+
+      </div>
+      <p class="text-sm font-medium text-gray-900">
+        {% if product.selected_or_first_available_variant.price %}
+        <span class="snipt_price">{{ product.selected_or_first_available_variant.price | money_with_currency}}</span>
+        {% endif %}
+        {% if product.selected_or_first_available_variant.compare_at_price %}
+          <span class="snipt_compare_price">{{ product.selected_or_first_available_variant.compare_at_price | money_with_currency}}</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+
+  <style>
+    .spinner span{display:none;}
+    li label {cursor: pointer;}
+    li.swatchlist label.imglabel {
+      width: 40px;
+      height: 40px;
+      display: block;
+      border-radius: 50px;
+      text-align: center;
+      border: 2px solid transparent;
+      font-size: 0;
+      margin-right: 5px;
+      background-size: contain !important;
+background-position: center !important;
+  }
+ 
+input[type="radio"]:checked + label{border-color: #000 !important;}
+  li.swatchlist label.withoutimglabel {
+    border: 1px solid #ccc;
+    display: flex;
+    padding: 2px 5px;
+    margin-right: 5px;
+    border-radius: 5px;
+    background:#fff;
+}
+input[type="radio"]:checked + label.withoutimglabel{border-color: red !important;}
+.sneppts-product-form {
+  position: absolute;
+  background: #0000008c;
+  z-index: 5;
+  width: 100%;
+  padding: 8px 8px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  border-radius: 5px;
+  bottom: -50%;
+ opacity: 0;
+  transition: bottom 0.3s ease; 
+}
+.snipt-form-wrap{    overflow: hidden;}
+.snipt-form-wrap:hover .sneppts-product-form {
+display: block;
+bottom: 0;
+transition: bottom 0.3s ease; 
+opacity: 1;
+}
+span.snipt_compare_price {
+color: red;
+text-decoration: line-through;
+padding-left: 3px;
+}
+  </style>

@@ -1,0 +1,206 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<div class="container px-4 mx-auto">
+<div class="grid grid-cols-2 gap-4">
+  <!----product media--->
+  <!--- gallery---->
+  <div>
+<div class="swiper mySwiper2">
+  <div class="media swiper-wrapper">
+    {% for media in product.media %}
+    <div class="swiper-slide" id="{{ media.id }}">
+     {% render 'product-media',media:media %}
+    </div>
+    {% endfor %}
+  </div>
+   <div class="swiper-button-next"></div>
+   <div class="swiper-button-prev"></div>
+</div>
+  <!--- thumbs---->
+<div class="hidden md:block">
+  <div thumbsSlider="" class="swiper mySwiper">
+    <div class="swiper-wrapper">
+      {% for media in product.media %}
+      <div class="swiper-slide">
+        {% render 'product-media',media:media %}
+      </div>
+    {% endfor %}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+</div>
+  </div>
+  <!----product info--->
+  <div class="product-info pl-3 ">
+    {% form 'product',product %}
+  <input type="hidden"  name="id" value="{{ product.selected_or_first_available_variant.id }}"/>
+{% for block in section.blocks %}
+ {%- case block.type -%}
+  {%- when "vender" -%}
+     <div class="mb-2">
+      <span class="text-sm text-gray-500">{{ product.vendor }}</span>
+    </div>
+    {%- when "title" -%}
+    <div class="mb-2">
+      <span class="text-xl text-gray-500">{{ product.title }}</span>
+    </div>
+    {%- when "price" -%}
+    <div class="mb-2">
+      <span class="text-base text-gray-500">{{ product.selected_or_first_available_variant.price | money }}</span>
+      {% if product.selected_or_first_available_variant.compare_at_price %}
+      <span class="text-base text-red-500 line-through text-gray-500">{{ product.selected_or_first_available_variant.compare_at_price |money }}</span>
+        <span class="bg-red-500 rounded-full px-4 text-white py-1">SALE</span>
+      {% endif %}
+    </div>
+    {%- when "variants" -%}
+     <!--form--->
+<div  class="mb-2">
+{% if product.variants.size > 1 %}
+<select name="id">
+  {% for variant in product.variants %}
+    <option value="{{ variant.id }}"
+      {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}>
+      {{ variant.title }} - {{ variant.price | money }}
+    </option>
+  {% endfor %}
+</select>
+{% endif %}
+</div>
+     <!--endform---->
+    {%- when "quantity" -%}
+     <div  class="mb-2">
+      <label  class="w-full block" for="quantity">Quantity</label>
+      <input type="number" name="quantity" value="1" min="1">
+    </div> 
+    {%- when "cartbtn" -%}
+     <div  class="mb-2">
+      <input type="submit" value="Add to cart">
+      <div class="bg-yellow-700">{{ form | payment_button }}</div>
+    </div> 
+    {%- when "description" -%}
+  <div  class="mb-2">
+    {{ product.description }}
+  </div>
+      
+{%- endcase -%}
+{% endfor %}
+    {% endform %}
+  </div>
+</div>
+</div>
+
+<script>
+  var swiper = new Swiper(".mySwiper", {
+    spaceBetween: 10,
+    slidesPerView: 4,
+    freeMode: true,
+    watchSlidesProgress: true,
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+  });
+  var swiper2 = new Swiper(".mySwiper2", {
+    spaceBetween: 10,
+    effect:"cube",
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    },
+    thumbs: {
+      swiper: swiper,
+    },
+  });
+</script>
+<style>
+
+ .swiper-slide-thumb-active {
+    border: 1px solid;
+ }
+ .product-info{
+  position: sticky;
+  height:fit-content;
+  top:5px;
+ }
+ button.shopify-payment-button__button.shopify-payment-button__button--unbranded {
+  background: #000;
+  margin-top: 10px;
+
+}
+</style>
+
+
+<script>
+  $(document).ready(function() {
+    const form = "#product_form_{{ product.id }}"; // Ensure that product.id is wrapped in Liquid syntax
+    $(form + " select").change(function() {
+      let varid = $(this).val();
+      var currentUrl = window.location.href;
+      var updatedUrl = updateQueryStringParameter(currentUrl, 'variant', varid);
+      // Redirect to the updated URL
+      window.location.href = updatedUrl;
+    });
+
+    function updateQueryStringParameter(uri, key, value) {
+      var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+      var separator = uri.indexOf("?") !== -1 ? "&" : "?";
+      if (uri.match(re)) {
+        return uri.replace(re, "$1" + key + "=" + value + "$2");
+      } else {
+        return uri + separator + key + "=" + value;
+      }
+    }
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Product template",
+    "settings": [
+      {
+       "type":"text",
+       "id":"text",
+       "label": "heading"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "vender",
+        "name": "Vender",
+        "limit":1
+      },
+      {
+        "type": "title",
+        "name": "Title",
+        "limit":1
+      },
+      {
+        "type": "price",
+        "name": "Price",
+        "limit":1
+      },
+      {
+        "type": "variants",
+        "name": "Variants",
+        "limit":1
+      },
+      {
+        "type": "quantity",
+        "name": "Quantity",
+        "limit":1
+      },
+      {
+        "type": "cartbtn",
+        "name": "Cart Button",
+        "limit":1
+      },
+      {
+        "type": "description",
+        "name": "Description",
+        "limit":1
+      }
+    ]
+  }
+{% endschema %}

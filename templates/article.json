@@ -1,0 +1,52 @@
+{
+  "sections": {
+    "template": {
+      "type": "article",
+      "blocks": {
+        "title": {
+          "type": "artle_title",
+          "settings": {
+          }
+        },
+        "author": {
+          "type": "artle_author",
+          "settings": {
+          }
+        },
+        "date": {
+          "type": "artle_date",
+          "settings": {
+          }
+        },
+        "content": {
+          "type": "artle_content",
+          "settings": {
+          }
+        },
+        "image": {
+          "type": "artle_image",
+          "settings": {
+          }
+        },
+        "tags": {
+          "type": "artle_tags",
+          "settings": {
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "image",
+        "content",
+        "author",
+        "date",
+        "tags"
+      ],
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "template"
+  ]
+}

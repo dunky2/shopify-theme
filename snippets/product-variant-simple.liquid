@@ -1,0 +1,10 @@
+
+<select onchange="simpleVariant(this)" name="id">
+    {% for variant in product.variants %}
+        {% if current_variant.id == variant.id %}
+         <option selected="selected"  value="{{ variant.id }}">{{ variant.title }}-{{ variant.price | money_with_currency}}</option>
+        {% else %}
+         <option  value="{{ variant.id }}">{{ variant.title }}-{{ variant.price | money_with_currency}}</option>
+        {% endif %}
+    {% endfor %}
+</select>

@@ -1,0 +1,45 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+{{ section.id}}
+{% assign byAjax = true %}
+{% form "product", product %}
+   {% comment %} <input  type="hidden" name="id" value="{{current_variant.id }}"   /> {% endcomment %}
+  
+   {% render "price",current_variant:current_variant %}
+
+   <input class="w-full border border-gray-200 mb-3" type="number" name="quantity" min="1" value="1">
+   <input class="w-full border border-gray-200 mb-3" type="text" name="properties[additional-note]" />
+   {% render 'product-variant-simple',product:product,current_variant:current_variant,byAjax:byAjax %}
+   {% if product.available %}
+    {% if byAjax %}
+   <button onclick="addTocartProductPage(this)" class="w-full border border-gray-100 mb-3 bg-red-500" type="button" >
+   Add to cart <span class="loaderrr">....</span>
+  </button>
+   {% else %}
+   <input class="w-full border border-gray-100 mb-3 bg-red-500" type="submit" value="Add to cart">
+   {% endif %}
+   {% else %}
+   <input type="submit" value="Sold Out" disabled>
+  {% endif %}
+{% endform %}
+
+
+<style>
+.loaderrr{display: none;}
+.pending .loaderrr{display: inline-block;}
+</style>
+
+{% schema %}
+  {
+    "name": "product2",
+    "settings": [
+      
+    ],
+    "presets": [
+      {
+        "name": "product2",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

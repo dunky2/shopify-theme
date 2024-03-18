@@ -1,0 +1,65 @@
+<div class="flex w-96 fixed bg-gray-400 text-white right-0 h-screen top-0 z-10 p-4" id="cartDrawer">
+
+  <form  id="myFormData" action="{{ routes.cart_url }}" method="post">
+      <div class="mt-0">
+        <div class="flow-root">
+         
+          <div class="flex text-xl font-bold justify-between items-center mb-4"><span>Cart Items</span> <span class="text-sm" id="cartCount">{{ cart.item_count }}</span></div>
+          <ul role="list" class="-my-6 divide-y divide-gray-200">
+            
+          {% if cart.item_count > 0 %}
+            {% for item in cart.items %}
+              <input type="text" name="updates[]" value="{{ item.quantity }}">
+
+              <li class="flex py-6">
+                <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                  <img class="w-full h-full object-cover object-top" src="{{ item.image  | img_url: 'medium' }}" alt="{{ item.title }}">
+                </div>
+
+                <div class="ml-4 flex flex-1 flex-col">
+                  <div>
+                    <div class="flex justify-between text-base font-medium text-gray-900">
+                      <h3>
+                        <a href="#">{{ item.title }}</a>
+                      </h3>
+                      <p class="ml-4">
+                        {% if item.variant.compare_at_price > item.price %}
+                        <span class="text-red-500 line-through">{{ item.variant.compare_at_price | money }}</span>
+                      {% endif %}
+                        <span>{{ item.price | money }}</span>
+                      
+                      </p>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-500">{{ item.variant.title }}</p>
+                   
+                  </div>
+                  <div class="flex flex-1 items-end justify-between text-sm">
+                    <p class="text-gray-500">
+                      Qty
+                      <input onchange="updateCartItem(event, '{{ item.id}}')" class="w-12" type="number"  value="{{ item.quantity}}"/>
+                    </p>
+
+                    <div class="flex">
+                      <button type="button" class="font-medium text-indigo-600 hover:text-indigo-500">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+            {% else %}
+           <p>Cart empty</p>
+          {% endif %}
+          </ul>
+          </div>
+          </div>
+       
+      <div class="fixed bottom-0 w-full">
+        <input class="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700" type="submit" name="checkout" value="Checkout"/>
+    </div>
+      </form>
+</div>
+
+<script>
+  const formData = $("#myFormData").serialize()
+  console.log(formData+"----rrr")
+ </script> 

@@ -1,0 +1,46 @@
+<div>
+    <h1 class="text-5xl font-bold ">{{ section.settings.heading }}</h1>
+    <p class="pt-2">{{ section.settings.subheading }}</p>
+    <div>
+        {% if section.settings.link == blank %}
+           {% assign btn_url = shop.secure_url %}
+        {% else %}
+           {% assign btn_url = section.settings.link %}
+        {% endif %}
+
+      <a class="text-sm underline text-blue-500" href="{{ btn_url }}">{{ section.settings.label }}</a>
+    </div>
+</div>
+
+{% schema %}
+{
+"name": "404 template",
+"tag": "section",
+"class": "flex items-center text-center justify-center h-screen",
+"settings": [
+    {
+     "type": "text",
+     "id": "heading",
+     "label": "404 page heading",
+     "default": "404"
+    },
+    {
+        "type": "text",
+        "id": "subheading",
+        "label": "404 page sub heading",
+        "default": "Page not Found"
+       },
+       {
+       "type": "text",
+       "id": "label",
+       "label": "Button label",
+       "default": "Back to Home Page"
+    },
+    {
+        "type": "url",
+        "id": "link",
+        "label": "Button Url"
+     }
+]
+}
+{% endschema %}

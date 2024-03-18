@@ -1,0 +1,6 @@
+{% assign text = text | default: 'Button' %}
+{% assign url = url | default: '#' %}
+{% assign class = class | default: '' %}
+
+<a href="{{ url }}" class="bg-black hover:bg-white text-white  hover:text-black py-2 px-4 border border-black hover:border-white  {{ class }}">{{ text }}</a>
+

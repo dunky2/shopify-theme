@@ -1,0 +1,37 @@
+{% assign items = product.metafields.custom.multicolumn_section.value %}   
+<ul>
+    {% for item in items %}
+      <li>
+        <ul>
+          {% for image in item.image.value %}
+            <li><img src="{{ image | img_url: 'medium' }}" /></li>
+          {% endfor %}
+        </ul>
+        <ul>
+            {% for title in item.title.value %}
+              <li>{{ title }}</li>
+            {% endfor %}
+          </ul>
+      </li>
+      <p>{{ item.description }}</p>
+    {% endfor %}
+  </ul>
+{% schema %}
+  {
+    "name": "Multiple Coulmn Section",
+    "settings": [
+      {
+        "type":"text",
+        "id":"head",
+        "label": "title"
+    }
+    ],
+    "presets": [
+      {
+        "name": "Multiple Coulmn Section",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

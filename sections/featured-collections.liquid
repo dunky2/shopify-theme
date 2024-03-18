@@ -1,0 +1,44 @@
+
+<div class="bg-white">
+ <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+    <h2 class="text-2xl font-bold tracking-tight text-gray-900">{{ section.settings.heading }}</h2>
+    <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+        {% for product in section.settings.collection.products  limit:section.settings.productLimit %}
+            {% render 'product',product:product %}
+        {% endfor %}
+    </div>
+ </div>
+</div>
+{% schema %}
+  {
+    "name": "Featured Collection",
+    "settings": [
+        {
+         "type":"text",
+         "id":"heading",
+         "label":"Section Title",
+         "default": "Featured Collections"
+        },
+        {
+        "type": "collection",
+        "id":"collection",
+        "label":"Select Collection"
+        },
+        {
+            "type": "range",
+            "id":"productLimit",
+            "label":"Choose limit of products",
+            "max":30,
+            "min":4,
+            "default": 4
+            }
+    ],
+    "presets": [
+      {
+        "name": "Featured Collection",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}
