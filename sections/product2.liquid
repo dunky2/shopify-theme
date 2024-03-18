@@ -7,7 +7,7 @@
    {% render "price",current_variant:current_variant %}
 
    <input class="w-full border border-gray-200 mb-3" type="number" name="quantity" min="1" value="1">
-   <input class="w-full border border-gray-200 mb-3" type="text" name="properties[additional-note]" />
+   <input class="w-full border border-gray-500 mb-3" type="text" name="properties[additional-note]" />
    {% render 'product-variant-simple',product:product,current_variant:current_variant,byAjax:byAjax %}
    {% if product.available %}
     {% if byAjax %}

@@ -51,7 +51,7 @@
       <span class="text-base text-gray-500">{{ product.selected_or_first_available_variant.price | money }}</span>
       {% if product.selected_or_first_available_variant.compare_at_price %}
       <span class="text-base text-red-500 line-through text-gray-500">{{ product.selected_or_first_available_variant.compare_at_price |money }}</span>
-        <span class="bg-red-500 rounded-full px-4 text-white py-1">SALE</span>
+        <span class="bg-green-500 rounded-full px-4 text-white py-1">SALE</span>
       {% endif %}
     </div>
     {%- when "variants" -%}
